@@ -17,7 +17,8 @@ export default function ProfilePage() {
   }
 
   const diff = parseFloat(profile.weight) - parseFloat(profile.targetWeight)
-
+  const diffAbs = Math.abs(diff)
+  
   return (
     <div>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'16px 20px 12px' }}>
@@ -88,11 +89,11 @@ export default function ProfilePage() {
         {profile.weight && profile.targetWeight && (
           <div className="card" style={{ marginTop:'16px' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-              <span style={{ fontSize:'32px' }}>{diff > 0 ? '🎯' : '🎉'}</span>
+              <span style={{ fontSize:'32px' }}>{diff !== 0 ? '🎯' : '🎉'}</span>
               <div>
                 <p style={{ color:'#fff', fontWeight:'700' }}>
-                  {diff > 0
-                    ? `目標まであと ${diff.toFixed(1)} kg`
+                  {diff !== 0
+                    ? `目標まであと ${diffAbs.toFixed(1)} kg`
                     : '目標体重に達しています！'}
                 </p>
                 <p style={{ color:'#B0B0C0', fontSize:'12px', marginTop:'4px' }}>
