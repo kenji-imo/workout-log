@@ -142,6 +142,14 @@ export default function ProfilePage() {
         <button className="accent-btn" style={{ marginTop:'24px' }} onClick={save}>
           変更を保存
         </button>
+
+        <button onClick={() => supabase.auth.signOut()} style={{
+          width:'100%', marginTop:'12px', padding:'14px', borderRadius:'12px',
+          border:'1px solid rgba(233,69,96,0.4)', background:'transparent',
+          color:'#E94560', fontWeight:'700', cursor:'pointer'
+        }}>
+          ログアウト
+        </button>
       </div>
 
       {/* 保存トースト */}
