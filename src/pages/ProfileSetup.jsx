@@ -75,7 +75,7 @@ export default function ProfileSetup({ onComplete }) {
           {weight && targetWeight && (
             <div className="card" style={{ marginTop: '8px' }}>
               <p style={{ color: '#fff', fontWeight: '700' }}>
-                目標まであと {(parseFloat(weight) - parseFloat(targetWeight)).toFixed(1)} kg 💪
+                目標まであと {Math.abs(parseFloat(weight) - parseFloat(targetWeight)).toFixed(1)} kg 
               </p>
             </div>
           )}
