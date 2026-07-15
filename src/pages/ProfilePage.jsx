@@ -72,15 +72,7 @@ export default function ProfilePage() {
           </p>
         </div>
 
-        {/* フレンドコード */}
-        {friendCode && (
-          <div className="card" onClick={copyFriendCode} style={{ marginBottom:'24px', cursor:'pointer', textAlign:'center' }}>
-            <p style={{ color:'#B0B0C0', fontSize:'12px', marginBottom:'6px' }}>あなたのフレンドコード(タップでコピー)</p>
-            <p style={{ color:'#fff', fontSize:'24px', fontWeight:'900', letterSpacing:'4px' }}>
-              {copied ? 'コピーしました！' : friendCode}
-            </p>
-          </div>
-        )}
+        
 
         {/* フレンドコード */}
         {friendCode && (
