@@ -22,30 +22,18 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
-    if (mode === 'signup') {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+  if (mode === 'signup') {
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: { nickname: nickname || 'トレーニー' },
+        },
       })
       if (signUpError) {
         setError(signUpError.message)
         setLoading(false)
         return
-      }
-
-      const userId = data.user?.id
-      if (userId) {
-        const { error: profileError } = await supabase.from('profiles').insert({
-          id: userId,
-          nickname: nickname || 'トレーニー',
-          friend_code: generateFriendCode(),
-        })
-        if (profileError) {
-          setError('プロフィール作成に失敗しました: ' + profileError.message)
-          setLoading(false)
-          return
-        }
       }
     } else {
       const { error: signInError } = await supabase.auth.signInWithPassword({
