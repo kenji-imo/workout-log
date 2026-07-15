@@ -1,10 +1,33 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../supabaseClient'
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState(() =>
     JSON.parse(localStorage.getItem('profile') || '{}')
   )
   const [saved, setSaved] = useState(false)
+  const [friendCode, setFriendCode] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    const fetchFriendCode = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('profiles')
+        .select('friend_code')
+        .eq('id', user.id)
+        .single()
+      if (data) setFriendCode(data.friend_code)
+    }
+    fetchFriendCode()
+  }, [])
+
+  const copyFriendCode = () => {
+    navigator.clipboard.writeText(friendCode)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   const update = (field, value) => {
     setProfile(prev => ({ ...prev, [field]: value }))
@@ -48,6 +71,26 @@ export default function ProfilePage() {
             {profile.gender} · {profile.age}歳
           </p>
         </div>
+
+        {/* フレンドコード */}
+        {friendCode && (
+          <div className="card" onClick={copyFriendCode} style={{ marginBottom:'24px', cursor:'pointer', textAlign:'center' }}>
+            <p style={{ color:'#B0B0C0', fontSize:'12px', marginBottom:'6px' }}>あなたのフレンドコード(タップでコピー)</p>
+            <p style={{ color:'#fff', fontSize:'24px', fontWeight:'900', letterSpacing:'4px' }}>
+              {copied ? 'コピーしました！' : friendCode}
+            </p>
+          </div>
+        )}
+
+        {/* フレンドコード */}
+        {friendCode && (
+          <div className="card" onClick={copyFriendCode} style={{ marginBottom:'24px', cursor:'pointer', textAlign:'center' }}>
+            <p style={{ color:'#B0B0C0', fontSize:'12px', marginBottom:'6px' }}>あなたのフレンドコード(タップでコピー)</p>
+            <p style={{ color:'#fff', fontSize:'24px', fontWeight:'900', letterSpacing:'4px' }}>
+              {copied ? 'コピーしました！' : friendCode}
+            </p>
+          </div>
+        )}
 
         {/* フォーム */}
         <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
