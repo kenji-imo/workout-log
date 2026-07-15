@@ -5,6 +5,7 @@ const tabs = [
   { path:'/calendar', icon:'📅', label:'カレンダー' },
   { path:'/record', icon:'📝', label:'記録' },
   { path:'/graph', icon:'📊', label:'グラフ' },
+  { path:'/friends', icon:'🏆', label:'フレンド' },
   { path:'/profile', icon:'👤', label:'プロフィール' },
 ]
 
