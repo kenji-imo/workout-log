@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { supabase } from '../supabaseClient'
 
 const exerciseDB = {
   '胸': ['バーベルベンチプレス','インクラインベンチプレス','デクラインベンチプレス','ダンベルベンチプレス','ダンベルフライ','ケーブルクロスオーバー','チェストプレス（マシン）','ペックデック','プッシュアップ','ディップス'],
@@ -188,7 +189,7 @@ export default function RecordPage() {
 
   const totalCalories = exercises.reduce((sum, ex) => sum + calcCalories(ex), 0)
 
-  const saveRecord = () => {
+  const saveRecord = async () => {
     const records = JSON.parse(localStorage.getItem('records') || '[]')
     const record = {
       date: new Date().toISOString(),
@@ -198,6 +199,17 @@ export default function RecordPage() {
     }
     records.push(record)
     localStorage.setItem('records', JSON.stringify(records))
+
+    // Supabaseにも「今日トレーニングした」ことを記録(フレンドランキング用)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const todayDate = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+      await supabase.from('training_days').upsert(
+        { user_id: user.id, date: todayDate },
+        { onConflict: 'user_id,date' }
+      )
+    }
+
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
