@@ -81,8 +81,20 @@ export default function Home() {
           <h2 style={{ color:'#fff', fontSize:'16px', fontWeight:'700', marginBottom:'12px' }}>🎯 目標体重への進捗</h2>
           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'10px' }}>
             <div>
-              <p style={{ color:'#B0B0C0', fontSize:'12px' }}>現在</p>
-              <p style={{ color:'#fff', fontSize:'22px', fontWeight:'900' }}>{current.toFixed(1)} kg</p>
+              <p style={{ color:'#B0B0C0', fontSize:'12px' }}>現在(タップで編集)</p>
+              <div style={{ display:'flex', alignItems:'baseline', gap:'4px' }}>
+                <input
+                  type="number"
+                  value={profile.weight ?? ''}
+                  onChange={e => updateWeight(e.target.value)}
+                  style={{
+                    width:'70px', fontSize:'22px', fontWeight:'900', padding:'2px 4px',
+                    background:'transparent', border:'none', borderBottom:'2px solid #E94560', color:'#fff'
+                  }}
+                  placeholder="0.0"
+                />
+                <span style={{ color:'#B0B0C0', fontSize:'14px' }}>kg</span>
+              </div>
             </div>
             <div style={{ color:'#B0B0C0', fontSize:'20px', alignSelf:'center' }}>→</div>
             <div style={{ textAlign:'right' }}>
