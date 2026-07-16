@@ -9,7 +9,7 @@ export default function ProfileSetup({ onComplete }) {
   const [targetWeight, setTargetWeight] = useState('')
 
   const save = () => {
-    const profile = { nickname, age, gender, weight, targetWeight }
+    const profile = { nickname, age, gender, weight, targetWeight, startWeight: weight }
     localStorage.setItem('profile', JSON.stringify(profile))
     localStorage.setItem('isProfileSetup', 'true')
     onComplete()
