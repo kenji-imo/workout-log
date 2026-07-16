@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../supabaseClient'
+import ExerciseIcon from '../components/ExerciseIcon'
 
 const exerciseDB = {
   '胸': ['バーベルベンチプレス','インクラインベンチプレス','デクラインベンチプレス','ダンベルベンチプレス','ダンベルフライ','ケーブルクロスオーバー','チェストプレス（マシン）','ペックデック','プッシュアップ','ディップス'],
@@ -375,11 +376,14 @@ export default function RecordPage() {
               {exerciseDB[pickerMuscle].map(name => (
                 <button key={name} onClick={() => addExercise(name, pickerMuscle)} style={{
                   background:'#1A1A2E', border:'none', borderRadius:'12px',
-                  padding:'14px 16px', color:'#fff', fontWeight:'600',
+                  padding:'10px 16px', color:'#fff', fontWeight:'600',
                   cursor:'pointer', textAlign:'left', fontSize:'14px',
-                  display:'flex', justifyContent:'space-between', alignItems:'center'
+                  display:'flex', justifyContent:'space-between', alignItems:'center', gap:'10px'
                 }}>
-                  {name}
+                  <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                    <ExerciseIcon name={name} muscle={pickerMuscle} accent={muscleColors[pickerMuscle]} size={30} />
+                    {name}
+                  </div>
                   <span style={{ color:'#E94560', fontSize:'18px' }}>＋</span>
                 </button>
               ))}
