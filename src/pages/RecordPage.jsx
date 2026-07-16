@@ -207,7 +207,6 @@ export default function RecordPage() {
     }
     records.push(record)
     localStorage.setItem('records', JSON.stringify(records))
-    localStorage.removeItem('recordDraft') // 保存できたので下書きは消す
 
     // Supabaseにも「今日トレーニングした」ことを記録(フレンドランキング用)
     const { data: { user } } = await supabase.auth.getUser()
