@@ -125,7 +125,6 @@ function TimerModal({ onClose }) {
 }
 
 export default function RecordPage() {
-  const [bodyWeight, setBodyWeight] = useState('')
   const [exercises, setExercises] = useState([])
   const [showPicker, setShowPicker] = useState(false)
   const [pickerMuscle, setPickerMuscle] = useState('胸')
@@ -136,10 +135,20 @@ export default function RecordPage() {
   const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
   const today = new Date().toDateString()
   const todaySession = sessions.find(s => new Date(s.date).toDateString() === today)
+  const weightForCalc = parseFloat(profile.weight) || 70
 
+  // 入力途中の内容を復元(ページ移動しても消えないように)
   useEffect(() => {
-    setBodyWeight(profile.weight || '')
+    const draft = JSON.parse(localStorage.getItem('recordDraft') || 'null')
+    if (draft && draft.date === today) {
+      setExercises(draft.exercises || [])
+    }
   }, [])
+
+  // 入力するたびに下書きとして自動保存
+  useEffect(() => {
+    localStorage.setItem('recordDraft', JSON.stringify({ date: today, exercises }))
+  }, [exercises])
 
   const addExercise = (name, muscle) => {
     setExercises(prev => [...prev, {
@@ -182,9 +191,8 @@ export default function RecordPage() {
 
   const calcCalories = (ex) => {
     const met = metValues[ex.name] || metValues['default']
-    const bw = parseFloat(bodyWeight) || 70
     const durationHours = ex.sets.length * 2 / 60
-    return bw * met * durationHours
+    return weightForCalc * met * durationHours
   }
 
   const totalCalories = exercises.reduce((sum, ex) => sum + calcCalories(ex), 0)
@@ -193,12 +201,13 @@ export default function RecordPage() {
     const records = JSON.parse(localStorage.getItem('records') || '[]')
     const record = {
       date: new Date().toISOString(),
-      bodyWeight: parseFloat(bodyWeight) || 0,
+      bodyWeight: weightForCalc,
       exercises,
       totalCalories
     }
     records.push(record)
     localStorage.setItem('records', JSON.stringify(records))
+    localStorage.removeItem('recordDraft') // 保存できたので下書きは消す
 
     // Supabaseにも「今日トレーニングした」ことを記録(フレンドランキング用)
     const { data: { user } } = await supabase.auth.getUser()
@@ -224,35 +233,6 @@ export default function RecordPage() {
       </div>
 
       <div className="px-20">
-        {/* 体重入力 */}
-        <div className="card">
-          <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-            <span style={{ fontSize:'28px' }}>⚖️</span>
-            <div style={{ flex:1 }}>
-              <p style={{ color:'#B0B0C0', fontSize:'12px' }}>今日の体重</p>
-              <div style={{ display:'flex', alignItems:'baseline', gap:'6px' }}>
-                <input
-                  type="number"
-                  value={bodyWeight}
-                  onChange={e => setBodyWeight(e.target.value)}
-                  style={{ width:'80px', fontSize:'22px', fontWeight:'900', padding:'4px 8px' }}
-                  placeholder="0.0"
-                />
-                <span style={{ color:'#B0B0C0', fontSize:'16px' }}>kg</span>
-              </div>
-            </div>
-            {bodyWeight && profile.targetWeight && (
-              <div style={{ textAlign:'right' }}>
-                <p style={{ color:'#B0B0C0', fontSize:'11px' }}>目標まで</p>
-                <p style={{ fontSize:'16px', fontWeight:'900',
-                  background:'linear-gradient(to right,#E94560,#FF6B35)',
-                  WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
-                }}>{Math.max(parseFloat(bodyWeight)-parseFloat(profile.targetWeight),0).toFixed(1)} kg</p>
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* 本日の部位 */}
         {todaySession?.muscles?.length > 0 && (
           <div style={{ marginBottom:'16px' }}>
