@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 export default function Home() {
   const navigate = useNavigate()
-  const profile = JSON.parse(localStorage.getItem('profile') || '{}')
+  const [profile, setProfile] = useState(() => JSON.parse(localStorage.getItem('profile') || '{}'))
   const records = JSON.parse(localStorage.getItem('records') || '[]')
   const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
 
@@ -10,15 +11,21 @@ export default function Home() {
   const todaySession = sessions.find(s => new Date(s.date).toDateString() === today)
   const latestRecord = records[records.length - 1]
 
-  const current = latestRecord?.bodyWeight || parseFloat(profile.weight) || 0
+  const initial = parseFloat(profile.startWeight) || parseFloat(profile.weight) || 0
+  const current = parseFloat(profile.weight) || 0
   const target = parseFloat(profile.targetWeight) || 0
-  const initial = parseFloat(profile.weight) || 0
   const diff = current - target
   const progress = initial !== target
   ? Math.min(Math.max(
       Math.abs(initial - current) / Math.abs(initial - target),
       0), 1)
   : 1
+
+  const updateWeight = (value) => {
+    const updated = { ...profile, weight: value }
+    setProfile(updated)
+    localStorage.setItem('profile', JSON.stringify(updated))
+  }
 
   const muscles = ['胸','肩','腕','背中','腹','脚']
   const muscleColors = {
